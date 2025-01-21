@@ -1,2 +1,2 @@
-# Go API
+# Implementation Guide
 TODO
