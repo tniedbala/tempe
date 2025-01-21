@@ -4,8 +4,7 @@ such as [cel](https://github.com/google/cel-go), [expr](https://github.com/expr-
 and [starlark](https://github.com/google/starlark-go).
 
 ## Current Status
-This is very much a work in progress - there is quite a bit more development currently needed
-to get this into a useable state.
+Very much a work in progress - see [TODO](#todo).
 
 ## Docs
 - [Template Syntax](./docs/template-syntax.md)
@@ -32,3 +31,21 @@ if err != nil {
 }
 fmt.Println(output)
 ```
+
+## TODO
+Core library:
+- [ ] Add logic for whitespace control.
+- [ ] Review logic around local environment creation & variable scope.
+- [ ] Improve error handling.
+- [ ] Create test suite.
+
+Implementations:
+- [ ] Complete default implementation.
+- [ ] Complete [Cel implementation](./engines/cel).
+- [ ] Complete [Expr implementation](./engines/expr).
+- [ ] Complete [Starlark implementation](./engines/starlark).
+
+Documentation:
+- [ ] Add docstrings to go source.
+- [ ] Complete [implementation guide](./docs/implementation-guid.md).
+- [ ] Improve [template syntax](./docs/template-syntax.md) docs.
