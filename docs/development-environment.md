@@ -37,7 +37,7 @@ Commands for building and testing with Java:
     if you'd like to run ANTLR from your local environment, which is necessary for executing the TestRig
     with the `-gui` option:
     ```shell
-    docker run --rm -v $PWD:/workspace tempe-dev test go
+    docker run --rm -v $PWD:/workspace tempe-dev antlr copy
     ```
 
 3. ### Java Build
