@@ -64,11 +64,13 @@ func (v TemplateVisitor) VisitAssignment(ctx base.IAssignmentContext) *Assignmen
 		name, expr := v.Name().GetText(), v.Expr().GetText()
 		assignment.Append(name, expr)
 	}
+	openStmt, closeStmt := v.visitEndStatement(ctx)
+	assignment.SetWhitespace(Upper, openStmt, closeStmt)
 	return assignment
 }
 
 func (v TemplateVisitor) VisitForLoop(ctx base.IForLoopContext) *ForLoop {
-	startFor := ctx.StartFor()
+	startFor, endFor := ctx.StartFor(), ctx.EndFor()
 	varName := startFor.Name().GetText()
 	indexName, index := "", startFor.Index()
 	if index != nil {
@@ -76,23 +78,61 @@ func (v TemplateVisitor) VisitForLoop(ctx base.IForLoopContext) *ForLoop {
 	}
 	expr := startFor.Expr().GetText()
 	body := v.VisitNodes(ctx.AllNode())
-	return NewForLoop(indexName, varName, expr, body)
+	forLoop := NewForLoop(indexName, varName, expr, body)
+	leftUpper, rightUpper := v.visitStartStatement(startFor)
+	leftLower, rightLower := v.visitEndStatement(endFor)
+	forLoop.SetWhitespace(Upper, leftUpper, rightUpper)
+	forLoop.SetWhitespace(Lower, leftLower, rightLower)
+	return forLoop
 }
 
 func (v TemplateVisitor) VisitIfStatement(ctx base.IIfStatementContext) *IfStatement {
 	clauses := NewTemplateNodesCollection()
-	startIf := ctx.StartIf()
-	expr, body := startIf.Expr().GetText(), v.VisitNodes(startIf.AllNode())
-	clauses.Append(NewIfClause(If, expr, body))
+	startIf, endIf := ctx.StartIf(), ctx.EndIf()
+	clause := v.VisitIfClause(startIf, If)
+	clauses.Append(clause)
 	for _, elseIf := range ctx.AllElseIf() {
-		expr, body = elseIf.Expr().GetText(), v.VisitNodes(elseIf.AllNode())
-		clauses.Append(NewIfClause(ElseIf, expr, body))
+		clause := v.VisitIfClause(elseIf, ElseIf)
+		clauses.Append(clause)
 	}
 	if elseCtx := ctx.Else_(); elseCtx != nil {
-		body = v.VisitNodes(elseCtx.AllNode())
-		clauses.Append(NewIfClause(Else, "", body))
+		clause := v.VisitElseClause(elseCtx)
+		clauses.Append(clause)
 	}
-	return NewIfStatement(clauses)
+	ifStmt := NewIfStatement(clauses)
+	openStmt, closeStmt := v.visitEndStatement(endIf)
+	ifStmt.SetWhitespace(Lower, openStmt, closeStmt)
+	return ifStmt
+}
+
+func (v TemplateVisitor) VisitIfClause(ctx ifClauseContext, kind IfClauseKind) *IfClause {
+	expr, body := ctx.Expr().GetText(), v.VisitNodes(ctx.AllNode())
+	clause := NewIfClause(kind, expr, body)
+	openStmt, closeStmt := v.visitStartStatement(ctx)
+	var position StatementPosition
+	if kind == If {
+		position = Upper
+	} else {
+		position = Inner
+	}
+	clause.SetWhitespace(position, openStmt, closeStmt)
+	return clause
+}
+
+func (v TemplateVisitor) VisitElseClause(ctx base.IElseContext) *IfClause {
+	body := v.VisitNodes(ctx.AllNode())
+	clause := NewIfClause(Else, "", body)
+	openStmt, closeStmt := v.visitEndStatement(ctx)
+	clause.SetWhitespace(Inner, openStmt, closeStmt)
+	return clause
+}
+
+func (v TemplateVisitor) visitStartStatement(ctx startStatement) (string, string) {
+	return ctx.OPEN_STMT().GetText(), ctx.CLOSE_STMT_EXPR().GetText()
+}
+
+func (v TemplateVisitor) visitEndStatement(ctx endStatement) (string, string) {
+	return ctx.OPEN_STMT().GetText(), ctx.CLOSE_STMT().GetText()
 }
 
 func (v TemplateVisitor) VisitErrorNode(ctx antlr.ErrorNode) api.TemplateNode {
