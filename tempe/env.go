@@ -18,9 +18,13 @@ func NewEnv(env api.Env) *Env {
 	return &Env{env: env}
 }
 
+func (e *Env) New() (api.Env, error) {
+	return &Env{}, nil
+}
+
 // Create a new local environment (copy of the parent environment).
-func (e *Env) LocalEnv() (api.Env, error) {
-	localEnv, err := e.env.LocalEnv()
+func (e *Env) Copy() (api.Env, error) {
+	localEnv, err := e.env.Copy()
 	if err != nil {
 		return nil, err
 	}
