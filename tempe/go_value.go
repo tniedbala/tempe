@@ -2,9 +2,10 @@ package tempe
 
 import (
 	"fmt"
-	"github.com/tniedbala/tempe/pkg/api"
-	"reflect"
 	"iter"
+	"reflect"
+
+	"github.com/tniedbala/tempe-go/tempe/api"
 )
 
 type GoValue struct {

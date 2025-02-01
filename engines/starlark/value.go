@@ -2,9 +2,10 @@ package tempo_starlark
 
 import (
 	"fmt"
-	"github.com/tniedbala/tempe/pkg/api"
-	"go.starlark.net/starlark"
 	"iter"
+
+	"github.com/tniedbala/tempe-go/tempe/api"
+	"go.starlark.net/starlark"
 )
 
 type StarlarkValue struct {

@@ -2,11 +2,12 @@ package tempo_starlark
 
 import (
 	"fmt"
-	"github.com/tniedbala/tempe/pkg"
-	"github.com/tniedbala/tempe/pkg/api"
+	"io"
+
+	"github.com/tniedbala/tempe-go/tempe"
+	"github.com/tniedbala/tempe-go/tempe/api"
 	"go.starlark.net/starlark"
 	"go.starlark.net/syntax"
-	"io"
 )
 
 type StarlarkEngine struct {

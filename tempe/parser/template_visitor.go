@@ -2,9 +2,10 @@ package parser
 
 import (
 	"fmt"
+
 	"github.com/antlr4-go/antlr/v4"
-	"github.com/tniedbala/tempe/pkg/api"
-	"github.com/tniedbala/tempe/pkg/parser/base"
+	"github.com/tniedbala/tempe-go/tempe/api"
+	"github.com/tniedbala/tempe-go/tempe/parser/base"
 )
 
 type TemplateVisitor struct {

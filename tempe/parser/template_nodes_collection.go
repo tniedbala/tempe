@@ -1,9 +1,10 @@
 package parser
 
 import (
-	"github.com/tniedbala/tempe/pkg/api"
 	"io"
 	"iter"
+
+	"github.com/tniedbala/tempe-go/tempe/api"
 )
 
 type TemplateNodesCollection struct {

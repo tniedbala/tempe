@@ -3,7 +3,7 @@ package parser
 import (
 	"io"
 
-	"github.com/tniedbala/tempe/pkg/api"
+	"github.com/tniedbala/tempe-go/tempe/api"
 )
 
 type Text struct {

@@ -2,7 +2,7 @@ package parser
 
 import (
 	"github.com/antlr4-go/antlr/v4"
-	"github.com/tniedbala/tempe/pkg/parser/base"
+	"github.com/tniedbala/tempe-go/tempe/parser/base"
 )
 
 type TemplateParser struct {

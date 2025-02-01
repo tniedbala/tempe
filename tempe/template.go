@@ -1,12 +1,13 @@
 package tempe
 
 import (
-	"fmt"
 	"bytes"
-	"github.com/tniedbala/tempe/pkg/api"
-	"github.com/tniedbala/tempe/pkg/parser"
+	"fmt"
 	"io"
 	"os"
+
+	"github.com/tniedbala/tempe-go/tempe/api"
+	"github.com/tniedbala/tempe-go/tempe/parser"
 )
 
 type Template struct {

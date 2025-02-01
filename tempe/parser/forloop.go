@@ -2,9 +2,10 @@ package parser
 
 import (
 	"fmt"
-	"github.com/tniedbala/tempe/pkg/api"
 	"io"
 	"strings"
+
+	"github.com/tniedbala/tempe-go/tempe/api"
 )
 
 type ForLoop struct {

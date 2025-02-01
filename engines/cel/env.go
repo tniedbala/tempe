@@ -2,10 +2,11 @@ package tempo_cel
 
 import (
 	"fmt"
-	"github.com/google/cel-go/cel"
-	"github.com/tniedbala/tempe/pkg/api"
 	"maps"
 	"slices"
+
+	"github.com/google/cel-go/cel"
+	"github.com/tniedbala/tempe-go/tempe/api"
 )
 
 type CelEnv struct {
