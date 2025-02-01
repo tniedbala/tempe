@@ -2,9 +2,6 @@ package nodes
 
 import (
 	"strings"
-
-	"github.com/antlr4-go/antlr/v4"
-	"github.com/tniedbala/tempe-go/tempe/parser/base"
 )
 
 type IfClauseKind int
@@ -52,20 +49,4 @@ func replaceSpace(text string) string {
 func replaceWhitespace(text string) string {
 	text = replaceNewline(text)
 	return replaceSpace(text)
-}
-
-type startStatement interface {
-	OPEN_STMT() antlr.TerminalNode
-	CLOSE_STMT_EXPR() antlr.TerminalNode
-}
-
-type endStatement interface {
-	OPEN_STMT() antlr.TerminalNode
-	CLOSE_STMT() antlr.TerminalNode
-}
-
-type ifClauseContext interface {
-	startStatement
-	Expr() base.IExprContext
-	AllNode() []base.INodeContext
 }
