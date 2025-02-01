@@ -1,4 +1,4 @@
-package parser
+package nodes
 
 import (
 	"fmt"
@@ -22,7 +22,7 @@ func (n *Expression) Children() []api.TemplateNode {
 	return []api.TemplateNode{}
 }
 
-func (n *Expression) Render(env api.Env, w io.StringWriter) error {
+func (n *Expression) Render(opts api.Options, env api.Env, w io.StringWriter) error {
 	value, err := env.Eval(n.expression)
 	if err != nil {
 		return err
@@ -31,6 +31,10 @@ func (n *Expression) Render(env api.Env, w io.StringWriter) error {
 	return err
 }
 
+func (n Expression) Format() (string, string) {
+	return "Expression", fmt.Sprintf(`"{{ %s }}"`, formatText(n.expression))
+}
+
 func (n Expression) String() string {
-	return fmt.Sprintf(`Expression: "%s"`, formatText(n.expression))
+	return "Expression{}"
 }

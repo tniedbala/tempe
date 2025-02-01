@@ -6,18 +6,19 @@ import (
 	"github.com/antlr4-go/antlr/v4"
 	"github.com/tniedbala/tempe-go/tempe/api"
 	"github.com/tniedbala/tempe-go/tempe/parser/base"
+	nd "github.com/tniedbala/tempe-go/tempe/parser/nodes"
 )
 
 type TemplateVisitor struct {
 	*base.BaseTemplateParserVisitor
 }
 
-func (v TemplateVisitor) VisitTemplate(ctx base.ITemplateContext) *TemplateNodesCollection {
+func (v TemplateVisitor) VisitTemplate(ctx base.ITemplateContext) *nd.TemplateNodesCollection {
 	return v.VisitNodes(ctx.AllNode())
 }
 
-func (v TemplateVisitor) VisitNodes(nodes []base.INodeContext) *TemplateNodesCollection {
-	n := NewTemplateNodesCollection()
+func (v TemplateVisitor) VisitNodes(nodes []base.INodeContext) *nd.TemplateNodesCollection {
+	n := nd.NewTemplateNodesCollection()
 	for _, node := range nodes {
 		n.Append(v.VisitNode(node))
 	}
@@ -37,12 +38,12 @@ func (v TemplateVisitor) VisitNode(ctx base.INodeContext) api.TemplateNode {
 	return v.VisitChildren(ctx)
 }
 
-func (v TemplateVisitor) VisitText(ctx base.ITextContext) *Text {
-	return NewText(ctx.GetText())
+func (v TemplateVisitor) VisitText(ctx base.ITextContext) *nd.Text {
+	return nd.NewText(ctx.GetText())
 }
 
-func (v TemplateVisitor) VisitExpression(ctx base.IExpressionContext) *Expression {
-	return NewExpression(ctx.Expr().GetText())
+func (v TemplateVisitor) VisitExpression(ctx base.IExpressionContext) *nd.Expression {
+	return nd.NewExpression(ctx.Expr().GetText())
 }
 
 func (v TemplateVisitor) VisitStatement(ctx base.IStatementContext) api.TemplateNode {
@@ -58,17 +59,19 @@ func (v TemplateVisitor) VisitStatement(ctx base.IStatementContext) api.Template
 	return v.VisitChildren(ctx)
 }
 
-func (v TemplateVisitor) VisitAssignment(ctx base.IAssignmentContext) *Assignment {
-	assignment := NewAssignment()
+func (v TemplateVisitor) VisitAssignment(ctx base.IAssignmentContext) *nd.Assignment {
+	assignment := nd.NewAssignment()
 	for _, v := range ctx.AllVar_() {
 		name, expr := v.Name().GetText(), v.Expr().GetText()
 		assignment.Append(name, expr)
 	}
+	openStmt, closeStmt := v.visitEndStatement(ctx)
+	assignment.SetWhitespace(nd.Upper, openStmt, closeStmt)
 	return assignment
 }
 
-func (v TemplateVisitor) VisitForLoop(ctx base.IForLoopContext) *ForLoop {
-	startFor := ctx.StartFor()
+func (v TemplateVisitor) VisitForLoop(ctx base.IForLoopContext) *nd.ForLoop {
+	startFor, endFor := ctx.StartFor(), ctx.EndFor()
 	varName := startFor.Name().GetText()
 	indexName, index := "", startFor.Index()
 	if index != nil {
@@ -76,23 +79,61 @@ func (v TemplateVisitor) VisitForLoop(ctx base.IForLoopContext) *ForLoop {
 	}
 	expr := startFor.Expr().GetText()
 	body := v.VisitNodes(ctx.AllNode())
-	return NewForLoop(indexName, varName, expr, body)
+	forLoop := nd.NewForLoop(indexName, varName, expr, body)
+	leftUpper, rightUpper := v.visitStartStatement(startFor)
+	leftLower, rightLower := v.visitEndStatement(endFor)
+	forLoop.SetWhitespace(nd.Upper, leftUpper, rightUpper)
+	forLoop.SetWhitespace(nd.Lower, leftLower, rightLower)
+	return forLoop
 }
 
-func (v TemplateVisitor) VisitIfStatement(ctx base.IIfStatementContext) *IfStatement {
-	clauses := NewTemplateNodesCollection()
-	startIf := ctx.StartIf()
-	expr, body := startIf.Expr().GetText(), v.VisitNodes(startIf.AllNode())
-	clauses.Append(NewIfClause(If, expr, body))
+func (v TemplateVisitor) VisitIfStatement(ctx base.IIfStatementContext) *nd.IfStatement {
+	clauses := nd.NewTemplateNodesCollection()
+	startIf, endIf := ctx.StartIf(), ctx.EndIf()
+	clause := v.VisitIfClause(startIf, nd.If)
+	clauses.Append(clause)
 	for _, elseIf := range ctx.AllElseIf() {
-		expr, body = elseIf.Expr().GetText(), v.VisitNodes(elseIf.AllNode())
-		clauses.Append(NewIfClause(ElseIf, expr, body))
+		clause := v.VisitIfClause(elseIf, nd.ElseIf)
+		clauses.Append(clause)
 	}
 	if elseCtx := ctx.Else_(); elseCtx != nil {
-		body = v.VisitNodes(elseCtx.AllNode())
-		clauses.Append(NewIfClause(Else, "", body))
+		clause := v.VisitElseClause(elseCtx)
+		clauses.Append(clause)
 	}
-	return NewIfStatement(clauses)
+	ifStmt := nd.NewIfStatement(clauses)
+	openStmt, closeStmt := v.visitEndStatement(endIf)
+	ifStmt.SetWhitespace(nd.Lower, openStmt, closeStmt)
+	return ifStmt
+}
+
+func (v TemplateVisitor) VisitIfClause(ctx ifClauseContext, kind nd.IfClauseKind) *nd.IfClause {
+	expr, body := ctx.Expr().GetText(), v.VisitNodes(ctx.AllNode())
+	clause := nd.NewIfClause(kind, expr, body)
+	openStmt, closeStmt := v.visitStartStatement(ctx)
+	var position nd.StatementPosition
+	if kind == nd.If {
+		position = nd.Upper
+	} else {
+		position = nd.Inner
+	}
+	clause.SetWhitespace(position, openStmt, closeStmt)
+	return clause
+}
+
+func (v TemplateVisitor) VisitElseClause(ctx base.IElseContext) *nd.IfClause {
+	body := v.VisitNodes(ctx.AllNode())
+	clause := nd.NewIfClause(nd.Else, "", body)
+	openStmt, closeStmt := v.visitEndStatement(ctx)
+	clause.SetWhitespace(nd.Inner, openStmt, closeStmt)
+	return clause
+}
+
+func (v TemplateVisitor) visitStartStatement(ctx startStatement) (string, string) {
+	return ctx.OPEN_STMT().GetText(), ctx.CLOSE_STMT_EXPR().GetText()
+}
+
+func (v TemplateVisitor) visitEndStatement(ctx endStatement) (string, string) {
+	return ctx.OPEN_STMT().GetText(), ctx.CLOSE_STMT().GetText()
 }
 
 func (v TemplateVisitor) VisitErrorNode(ctx antlr.ErrorNode) api.TemplateNode {
@@ -100,8 +141,8 @@ func (v TemplateVisitor) VisitErrorNode(ctx antlr.ErrorNode) api.TemplateNode {
 	panic(fmt.Sprintf("ERROR: %v", ctx))
 }
 
-func (v TemplateVisitor) VisitChildren(ctx antlr.RuleNode) *TemplateNodesCollection {
-	nodes := NewTemplateNodesCollection()
+func (v TemplateVisitor) VisitChildren(ctx antlr.RuleNode) *nd.TemplateNodesCollection {
+	nodes := nd.NewTemplateNodesCollection()
 	for _, child := range ctx.GetChildren() {
 		nodes.Append(v.Visit(child))
 	}

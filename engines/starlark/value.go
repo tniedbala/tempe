@@ -1,4 +1,4 @@
-package tempo_starlark
+package tempe_starlark
 
 import (
 	"fmt"
@@ -14,6 +14,14 @@ type StarlarkValue struct {
 
 func NewValue(value starlark.Value) StarlarkValue {
 	return StarlarkValue{value}
+}
+
+func (v StarlarkValue) New(value any) (api.Value, error) {
+	val, ok := value.(starlark.Value)
+	if !ok {
+		return nil, fmt.Errorf("starlark.Value required")
+	}
+	return NewValue(val), nil
 }
 
 func (v StarlarkValue) Bool() bool {

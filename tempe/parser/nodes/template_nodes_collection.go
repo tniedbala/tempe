@@ -1,4 +1,4 @@
-package parser
+package nodes
 
 import (
 	"io"
@@ -35,13 +35,17 @@ func (n *TemplateNodesCollection) Append(node api.TemplateNode) {
 	n.nodes = append(n.nodes, node)
 }
 
-func (n *TemplateNodesCollection) Render(env api.Env, w io.StringWriter) error {
+func (n *TemplateNodesCollection) Render(opts api.Options, env api.Env, w io.StringWriter) error {
 	for node := range n.Iter() {
-		if err := node.Render(env, w); err != nil {
+		if err := node.Render(opts, env, w); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func (n *TemplateNodesCollection) Format() (string, string) {
+	return "TemplateNodesCollection", ""
 }
 
 func (n *TemplateNodesCollection) String() string {

@@ -19,6 +19,10 @@ func NewGoValue(value any) GoValue {
 	}
 }
 
+func (v GoValue) New(value any) (api.Value, error) {
+	return NewGoValue(value), nil
+}
+
 func (v GoValue) Bool() bool {
 	if v.value.Kind() == reflect.Bool {
 		return v.value.Bool()

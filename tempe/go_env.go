@@ -28,7 +28,14 @@ func NewGoEnv(values map[string]any) *GoEnv {
 	return &GoEnv{m}
 }
 
-func (e *GoEnv) LocalEnv() (api.Env, error) {
+func (e *GoEnv) New() (api.Env, error) {
+	env := &GoEnv{
+		values: map[string]GoValue{},
+	}
+	return env, nil
+}
+
+func (e *GoEnv) Copy() (api.Env, error) {
 	localEnv := NewGoEnv(nil)
 	return localEnv, nil
 }
