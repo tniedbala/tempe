@@ -5,12 +5,22 @@ import (
 	"iter"
 )
 
+type Option func(opt Options) (any, error)
+
+type Options interface {
+	Set(opt Option) error
+	Get(opt Option) (any, bool)
+	String() string
+}
+
 type TemplateEngine interface {
+	Options() Options
+	GetOption(opt Option) (any, bool)
+	SetOptions(opts ...Option) error
 	Read(reader io.Reader) (Template, error)
 	ReadFile(path string) (Template, error)
 	NewTemplate(src string) (Template, error)
-	DefaultEnv() Env
-	NewEnv(env map[string]any) (Env, error)
+	NewEnv() (Env, error)
 	NewValue(value any) (Value, error)
 }
 
@@ -18,14 +28,15 @@ type Template interface {
 	Engine() TemplateEngine
 	Env() Env
 	SetEnv(env map[string]any) error
+	Render(params ...map[string]any) (string, error)
+	Write(w io.StringWriter, params ...map[string]any) error
 	Parse(src string) error
 	ParseTree() ParseTree
-	Render(params map[string]any) (string, error)
-	Write(params map[string]any, w io.StringWriter) error
 }
 
 type Env interface {
-	LocalEnv() (Env, error)
+	New() (Env, error)
+	Copy() (Env, error)
 	Keys() []string
 	Map() map[string]Value
 	Get(name string) (Value, bool)
@@ -35,6 +46,7 @@ type Env interface {
 }
 
 type Value interface {
+	New(value any) (Value, error)
 	Bool() bool
 	String() string
 	Iter() (iter.Seq2[Value, Value], error)
@@ -51,6 +63,7 @@ type ParseTree interface {
 
 type TemplateNode interface {
 	Children() []TemplateNode
-	Render(env Env, w io.StringWriter) error
+	Render(opts Options, env Env, w io.StringWriter) error
+	Format() (string, string)
 	String() string
 }
