@@ -8,18 +8,22 @@ import (
 )
 
 type IfStatement struct {
+	Statement
 	clauses *TemplateNodesCollection
 }
 
 func NewIfStatement(clauses *TemplateNodesCollection) *IfStatement {
-	return &IfStatement{clauses}
+	return &IfStatement{
+		Statement: NewStatement(),
+		clauses:   clauses,
+	}
 }
 
 func (n *IfStatement) Children() []api.TemplateNode {
 	return n.clauses.Children()
 }
 
-func (n *IfStatement) Render(env api.Env, w io.StringWriter) error {
+func (n *IfStatement) Render(opts api.Options, env api.Env, w io.StringWriter) error {
 	for node := range n.clauses.Iter() {
 		clause, ok := node.(*IfClause)
 		if !ok {
@@ -31,12 +35,21 @@ func (n *IfStatement) Render(env api.Env, w io.StringWriter) error {
 			return err
 		}
 		if ok {
-			return clause.Render(env, w)
+			if err = clause.Render(opts, env, w); err != nil {
+				return err
+			}
 		}
+	}
+	if err := n.RenderWhitespace(Lower, opts, w); err != nil {
+		return err
 	}
 	return nil
 }
 
+func (n *IfStatement) Format() (string, string) {
+	return "IfStatement", ""
+}
+
 func (n IfStatement) String() string {
-	return "IfStatmement{}"
+	return "IfStatement{}"
 }
