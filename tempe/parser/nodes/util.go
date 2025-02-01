@@ -1,9 +1,7 @@
-package parser
+package nodes
 
 import (
-	"fmt"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/antlr4-go/antlr/v4"
 	"github.com/tniedbala/tempe-go/tempe/parser/base"
@@ -41,10 +39,6 @@ func formatText(text string) string {
 	return str
 }
 
-func strLen(text string) int {
-	return utf8.RuneCountInString(text)
-}
-
 func replaceNewline(text string) string {
 	text = strings.Replace(text, "\r", `\r`, -1)
 	return strings.Replace(text, "\n", `\n`, -1)
@@ -58,15 +52,6 @@ func replaceSpace(text string) string {
 func replaceWhitespace(text string) string {
 	text = replaceNewline(text)
 	return replaceSpace(text)
-}
-
-func alignRight(text string, width int, char string) string {
-	charCount := strLen(text)
-	if charCount > width {
-		return text
-	}
-	padLeft := strings.Repeat(char, width - charCount)
-	return fmt.Sprintf("%s%s", padLeft, text)
 }
 
 type startStatement interface {
