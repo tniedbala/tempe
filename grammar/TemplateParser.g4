@@ -73,5 +73,5 @@ expr
   ;
 
 text
-  : TEXT
+  : TEXT | LINE
   ;

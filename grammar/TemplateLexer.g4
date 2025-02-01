@@ -5,11 +5,27 @@ OPEN_EXPR
   ;
 
 OPEN_STMT
-  : '{%' WS* -> pushMode(Statement)
+  : N? S* '{%' [-+]? WS* -> pushMode(Statement)
+  ;
+
+LINE
+  : N CHARS*
   ;
 
 TEXT 
-  : ( ~'{' | '{' ~('{'|'%') )+
+  : CHARS+
+  ;
+
+fragment CHARS 
+  : ~('{'|[\r\n]) | '{' ~('{'|'%'|[\r\n]) 
+  ;
+
+fragment N
+  : '\r'? '\n'
+  ;
+
+fragment S
+  : [ \t]
   ;
 
 // ----------------------------------------------------
@@ -31,7 +47,7 @@ EXPR
 mode Statement;
 
 CLOSE_STMT
-  : WS* '%}' -> mode(DEFAULT_MODE)
+  : WS*  [-+]? '%}' (S* (N|EOF))? -> mode(DEFAULT_MODE)
   ;
 
 FOR
@@ -74,20 +90,8 @@ COMMA
   : ','
   ;
 
-// WS
-//   : [ \t\r\n]
-//   ;
-
 WS
-  : N | S 
-  ;
-
-fragment N
-  : '\r'? '\n'
-  ;
-
-fragment S 
-  : [ \t]
+  : N | S
   ;
 
 // ----------------------------------------------------
@@ -100,7 +104,7 @@ CLOSE_STMT_EXPR
   ;
 
 STMT_EXPR
-  : ( ~'%' | '%' ~'}' )+
+  : ( ~[-+%] | [-+] ~'%' | [-+] '%' ~'}' | '%' ~'}' )+
   ;
 
 // ----------------------------------------------------
