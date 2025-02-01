@@ -1,4 +1,4 @@
-package tempo_starlark
+package tempe_starlark
 
 import (
 	"fmt"
@@ -8,23 +8,39 @@ import (
 
 	"github.com/tniedbala/tempe-go/tempe/api"
 	"go.starlark.net/starlark"
+	"go.starlark.net/syntax"
 )
 
 type StarlarkEnv struct {
-	engine     *StarlarkEngine
+	opts       *syntax.FileOptions
+	thread     *starlark.Thread
 	stringDict starlark.StringDict
 }
 
-func NewEnv(engine *StarlarkEngine, stringDict starlark.StringDict) *StarlarkEnv {
-	return &StarlarkEnv{engine, stringDict}
-}
-
-func (e *StarlarkEnv) LocalEnv() (api.Env, error) {
-	localEnv := &StarlarkEnv{
-		engine:     e.engine,
+func NewEnv(opts *syntax.FileOptions, thread *starlark.Thread) *StarlarkEnv {
+	return &StarlarkEnv{
+		opts: opts,
+		thread: thread,
 		stringDict: starlark.StringDict{},
 	}
-	return localEnv, nil
+}
+
+func (e *StarlarkEnv) New() (api.Env, error) {
+	env := &StarlarkEnv{
+		opts:       e.opts,
+		thread:     e.thread,
+		stringDict: starlark.StringDict{},
+	}
+	return env, nil
+}
+
+func (e *StarlarkEnv) Copy() (api.Env, error) {
+	env := &StarlarkEnv{
+		opts:       e.opts,
+		thread:     e.thread,
+		stringDict: starlark.StringDict{},
+	}
+	return env, nil
 }
 
 func (e *StarlarkEnv) Keys() []string {
@@ -67,7 +83,7 @@ func (e *StarlarkEnv) Update(env api.Env) error {
 }
 
 func (e *StarlarkEnv) Eval(src string) (api.Value, error) {
-	value, err := starlark.EvalOptions(e.engine.opts, e.engine.thread, "starlark", src, e.stringDict)
+	value, err := starlark.EvalOptions(e.opts, e.thread, "starlark", src, e.stringDict)
 	return StarlarkValue{value}, err
 }
 
