@@ -59,7 +59,7 @@ func (n *IfClause) Eval(env api.Env) (bool, error) {
 }
 
 func (n *IfClause) Render(env api.Env, w io.StringWriter) error {
-	localEnv, err := env.LocalEnv()
+	localEnv, err := env.Copy()
 	if err != nil {
 		return err
 	}

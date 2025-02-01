@@ -40,7 +40,7 @@ func (n *ForLoop) Render(env api.Env, w io.StringWriter) error {
 	if err != nil {
 		return err
 	}
-	localEnv, err := env.LocalEnv()
+	localEnv, err := env.Copy()
 	if err != nil {
 		return err
 	}
