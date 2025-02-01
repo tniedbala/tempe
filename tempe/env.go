@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/tniedbala/tempe-go/pkg/api"
+	"github.com/tniedbala/tempe-go/tempe/api"
 )
 
 // Wrapper struct for api.Env, which will be used to implement intended template variable scope.

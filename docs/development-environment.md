@@ -10,7 +10,7 @@ docker build --tag tempe-dev .
 Commands for building and testing with Go:
 
 1. ### Build
-    Run ANTLR to generate Go source code in [pkg/parser/base](../pkg/parser/base):
+    Run ANTLR to generate Go source code in [pkg/parser/base](../tempe/parser/base):
     ```shell
     docker run --rm -v $PWD:/workspace tempe-dev go build
     ```

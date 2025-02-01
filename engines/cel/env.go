@@ -6,7 +6,7 @@ import (
 	"slices"
 
 	"github.com/google/cel-go/cel"
-	"github.com/tniedbala/tempe-go/pkg/api"
+	"github.com/tniedbala/tempe-go/tempe/api"
 )
 
 type CelEnv struct {

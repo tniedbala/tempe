@@ -7,7 +7,7 @@ import (
 	"github.com/google/cel-go/common/types"
 	"github.com/google/cel-go/common/types/ref"
 	"github.com/google/cel-go/common/types/traits"
-	"github.com/tniedbala/tempe-go/pkg/api"
+	"github.com/tniedbala/tempe-go/tempe/api"
 )
 
 type CelValue struct {

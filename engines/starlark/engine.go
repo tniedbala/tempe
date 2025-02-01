@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/tniedbala/tempe-go/pkg"
-	"github.com/tniedbala/tempe-go/pkg/api"
+	"github.com/tniedbala/tempe-go/tempe"
+	"github.com/tniedbala/tempe-go/tempe/api"
 	"go.starlark.net/starlark"
 	"go.starlark.net/syntax"
 )

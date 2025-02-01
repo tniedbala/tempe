@@ -5,7 +5,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/tniedbala/tempe-go/pkg/api"
+	"github.com/tniedbala/tempe-go/tempe/api"
 )
 
 type ForLoop struct {
