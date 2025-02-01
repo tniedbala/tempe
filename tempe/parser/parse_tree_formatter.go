@@ -56,14 +56,20 @@ func (p *ParseTreeFormatter) Indent() string {
 }
 
 func (p *ParseTreeFormatter) Render(w io.StringWriter) error {
-	var newline, branch, str string
+	var newline, branch, label, text string
 	if p.depth == 0 {
-		newline, branch, str = "", "", "Template:"
+		newline, branch, label, text = "", "", "Template", ""
 	} else {
-		newline, branch, str = "\n", p.Branch(), p.node.String()
+		newline, branch = "\n", p.Branch()
+		label, text = p.node.Format()
 	}
 	p.indent = p.ParentIndent() + p.Indent()
-	if _, err := w.WriteString(newline + p.indent + branch + str); err != nil {
+	branch = p.indent + branch + label + " "
+	charCount := strLen(branch)
+	if text != "" {
+		text = alignRight(text, 100 - charCount, ".")
+	}
+	if _, err := w.WriteString(newline + branch + text); err != nil {
 		return err
 	}
 	lastIndex := p.tree.Length() - 1
