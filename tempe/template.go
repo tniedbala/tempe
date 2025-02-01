@@ -8,6 +8,8 @@ import (
 	"github.com/tniedbala/tempe-go/tempe/parser"
 )
 
+type Params map[string]any
+
 type Template struct {
 	engine api.TemplateEngine
 	env    *Env
