@@ -1,8 +1,9 @@
 package parser
 
 import (
-	"github.com/tniedbala/tempe/pkg/api"
 	"iter"
+
+	"github.com/tniedbala/tempe-go/pkg/api"
 )
 
 type ParseTree struct {

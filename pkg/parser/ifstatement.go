@@ -2,8 +2,9 @@ package parser
 
 import (
 	"fmt"
-	"github.com/tniedbala/tempe/pkg/api"
 	"io"
+
+	"github.com/tniedbala/tempe-go/pkg/api"
 )
 
 type IfStatement struct {

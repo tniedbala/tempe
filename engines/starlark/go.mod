@@ -1,11 +1,11 @@
-module github.com/tniedbala/tempe/engines/starlark
+module github.com/tniedbala/tempe-go/engines/starlark
 
 go 1.23.4
 
-replace github.com/tniedbala/tempe v1.23.4 => ../../
+replace github.com/tniedbala/tempe-go v1.23.4 => ../../
 
 require (
-	github.com/tniedbala/tempe v1.23.4
+	github.com/tniedbala/tempe-go v1.23.4
 	go.starlark.net v0.0.0-20241226192728-8dfa5b98479f
 )
 

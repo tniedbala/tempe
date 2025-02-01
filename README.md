@@ -15,7 +15,7 @@ Very much a work in progress - see [TODO](#todo).
 ```go
 import (
     "fmt"
-    "github.com/tniedbala/tempe/pkg"
+    "github.com/tniedbala/tempe-go/pkg"
 )
 
 engine := tempe.DefaultEngine()

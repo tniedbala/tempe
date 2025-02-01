@@ -5,7 +5,7 @@ Tempe implementation using [starlark-go](https://github.com/google/starlark-go).
 ```go
 import (
     "fmt"
-    "github.com/tniedbala/tempe/engines/starlark"
+    "github.com/tniedbala/tempe-go/engines/starlark"
 )
 
 engine := tempe_starlark.NewEngine()

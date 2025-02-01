@@ -2,11 +2,12 @@ package tempe
 
 import (
 	"fmt"
-	"github.com/tniedbala/tempe/pkg/api"
 	"strings"
+
+	"github.com/tniedbala/tempe-go/pkg/api"
 )
 
-// Wrapper struct for api.Env, which will be used to implement intended template variable scope.  
+// Wrapper struct for api.Env, which will be used to implement intended template variable scope.
 type Env struct {
 	parent *Env
 	env    api.Env

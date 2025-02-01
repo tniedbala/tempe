@@ -2,8 +2,9 @@ package tempo_cel
 
 import (
 	"io"
-	"github.com/tniedbala/tempe/pkg"
-	"github.com/tniedbala/tempe/pkg/api"
+
+	"github.com/tniedbala/tempe-go/pkg"
+	"github.com/tniedbala/tempe-go/pkg/api"
 )
 
 type CelEngine struct {

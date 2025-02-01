@@ -6,7 +6,8 @@ import (
 	"regexp"
 	"slices"
 	"strings"
-	"github.com/tniedbala/tempe/pkg/api"
+
+	"github.com/tniedbala/tempe-go/pkg/api"
 )
 
 var regexpVarName *regexp.Regexp

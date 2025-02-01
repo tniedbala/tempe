@@ -1,12 +1,12 @@
-module github.com/tniedbala/tempe/engines/cel
+module github.com/tniedbala/tempe-go/engines/cel
 
 go 1.23.4
 
-replace github.com/tniedbala/tempe v1.23.4 => ../../
+replace github.com/tniedbala/tempe-go v1.23.4 => ../../
 
 require (
 	github.com/google/cel-go v0.22.1
-	github.com/tniedbala/tempe v1.23.4
+	github.com/tniedbala/tempe-go v1.23.4
 )
 
 require (

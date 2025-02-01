@@ -3,10 +3,11 @@ package tempo_cel
 import (
 	"fmt"
 	"iter"
+
 	"github.com/google/cel-go/common/types"
 	"github.com/google/cel-go/common/types/ref"
 	"github.com/google/cel-go/common/types/traits"
-	"github.com/tniedbala/tempe/pkg/api"
+	"github.com/tniedbala/tempe-go/pkg/api"
 )
 
 type CelValue struct {
