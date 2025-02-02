@@ -13,23 +13,27 @@ This library is still in very early stages of development and interfaces are sub
 
 ## Example Usage
 ```go
+package main 
+
 import (
     "fmt"
     "github.com/tniedbala/tempe-go/tempe"
 )
 
-engine := tempe.DefaultEngine()
-template, err := engine.NewTemplate("hello {{ name }}!")
-if err != nil {
-    panic(err)
-}
+func main() {
+	engine := tempe.DefaultEngine()
+	template, err := engine.NewTemplate("hello {{ name }}!")
+	if err != nil {
+		panic(err)
+	}
 
-params := tempe.Params{"name": "world"}
-output, err := template.Render(params)
-if err != nil {
-    panic(err)
+	params := tempe.Params{"name": "world"}
+	output, err := template.Render(params)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(output)
 }
-fmt.Println(output)
 ```
 
 ## TODO
