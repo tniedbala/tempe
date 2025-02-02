@@ -75,7 +75,7 @@ func init() {
 }
 
 func TestFilesInDirectory(t *testing.T) {
-	  testSuite.TestDir(t, dirFs, "tests/*.yaml")
+    testSuite.TestDir(t, dirFs, "tests/*.yaml")
 }
 
 func TestIndividualFile(t *testing.T) {
