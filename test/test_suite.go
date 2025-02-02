@@ -15,12 +15,10 @@ var testFS embed.FS
 // TestDir is an fs.FS containing standard test .yaml files.
 var TestDir fs.FS
 
+var initErr error
+
 func init() {
-	var err error 
-	TestDir, err = fs.Sub(testFS, "tests")
-	if err != nil {
-		panic("test directory not found")
-	}
+	TestDir, initErr = fs.Sub(testFS, "tests")
 }
 
 type TestSuite struct {
@@ -31,20 +29,18 @@ func NewTestSuite(engine api.TemplateEngine) TestSuite {
 	return TestSuite{Engine: engine}
 }
 
+func (s TestSuite) Err() error {
+	return initErr
+}
+
 func (s TestSuite) TestSpec(t *testing.T, filenames ...string) {
+	if initErr != nil {
+		t.Fatal(initErr)
+	}
 	if len(filenames) == 0 {
 		s.TestDir(t, TestDir, "*.yaml")
-	}
-	for _, filename := range filenames {
-		file, err := TestDir.Open(filename)
-		if err != nil {
-			t.Fatal(err)
-			return
-		}
-		s.TestFile(t, filename, file)
-		if err = file.Close(); err != nil {
-			t.Error(err)
-		}
+	} else {
+		s.TestFiles(t, TestDir, filenames...)
 	}
 }
 
@@ -57,20 +53,24 @@ func (s TestSuite) TestFile(t *testing.T, name string, reader io.Reader) {
 	file.Run(t, s.Engine)
 }
 
+func (s TestSuite) TestFiles(t *testing.T, dir fs.FS, filenames ...string) {
+	for _, filename := range filenames {
+		file, err := dir.Open(filename)
+		if err != nil {
+			t.Error(err)
+			continue
+		}
+		s.TestFile(t, filename, file)
+		if err = file.Close(); err !=  nil {
+			t.Error(err)
+		}
+	}
+}
+
 func (s TestSuite) TestDir(t *testing.T, dir fs.FS, glob string) {
 	filenames, err := fs.Glob(dir, glob)
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, filename := range filenames {
-		file, err := dir.Open(filename)
-		if err != nil {
-			t.Fatal(err)
-			continue
-		}
-		s.TestFile(t, filename, file)
-		if err = file.Close(); err != nil {
-			t.Error(err)
-		}
-	}
+	s.TestFiles(t, dir, filenames...)
 }
