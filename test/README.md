@@ -82,8 +82,8 @@ func TestIndividualFile(t *testing.T) {
     filename := "tests/custom-tests.yaml"
     file, err := fileFs.Open(filename)
     if err != nil {
-      t.Fatal(err)
-      return
+        t.Fatal(err)
+        return
     }
     testSuite.TestFile(t, filename, file)
 }
