@@ -5,7 +5,7 @@ go 1.23.4
 replace github.com/tniedbala/tempe-go v1.23.4 => ../../
 
 require (
-	github.com/tniedbala/tempe-go v1.23.4
+	github.com/tniedbala/tempe-go/tempe v1.23.4
 	go.starlark.net v0.0.0-20241226192728-8dfa5b98479f
 )
 
