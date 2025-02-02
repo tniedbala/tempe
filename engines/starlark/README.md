@@ -3,6 +3,8 @@ Tempe implementation using [starlark-go](https://github.com/google/starlark-go).
 
 ## Example Usage
 ```go
+package main 
+
 import (
     "fmt"
 	"go.starlark.net/starlark"
