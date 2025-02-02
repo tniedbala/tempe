@@ -1,0 +1,82 @@
+tests:
+  - name: if-01
+    params:
+      condition: true
+    template: |-
+      {% if condition %}
+      A
+      {% endif %}
+    output: "A"
+
+  - name: if-02
+    params:
+      condition: false
+    template: |-
+      {% if condition %}
+      A
+      {% endif %}
+    output: ""
+
+  - name: if-else-01
+    params:
+      condition: true
+    template: |-
+      {% if condition %}
+      A
+      {% else %}
+      B
+      {% endif %}
+    output: "A"
+
+  - name: if-else-02
+    params:
+      condition: false
+    template: |-
+      {% if condition %}
+      A
+      {% else %}
+      B
+      {% endif %}
+    output: "B"
+
+  - name: if-elseif-else-01
+    params:
+      condition1: true
+      condition2: false
+    template: |-
+      {% if condition1 %}
+      A
+      {% elseif condition2 %}
+      B
+      {% else %}
+      C
+      {% endif %}
+    output: "A"
+
+  - name: if-elseif-else-02
+    params:
+      condition1: false
+      condition2: true
+    template: |-
+      {% if condition1 %}
+      A
+      {% elseif condition2 %}
+      B
+      {% else %}
+      C
+      {% endif %}
+    output: "B"
+
+  - name: if-elseif-else-03
+    params:
+      condition1: false
+      condition2: false
+    template: |-
+      {% if condition1 %}
+      A
+      {% elseif condition2 %}
+      B
+      {% else %}
+      C
+      {% endif %}
+    output: "C"

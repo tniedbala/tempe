@@ -1,0 +1,8 @@
+tests:
+  - name: hello_world
+    params:
+      name: world
+    template: |-
+      hello {{ name }}!
+    output: |-
+      hello world!
