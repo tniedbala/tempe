@@ -1,0 +1,101 @@
+tests:
+  - name: basic-assignment-01
+    description: |
+      Basic assignment.
+    params:
+      a: 1
+    template: |-
+      {% value = a; %}
+      {{ a }} = {{ value }}
+    output: |-
+      1 = 1
+
+  - name: multi-variable-assignment-01
+    description: |
+      Multi-varable assignment.
+    params:
+      a: 1
+      b: 2
+      c: 3
+    template: |-
+      {% value1 = a; value2 = b; value3 = c; %}
+      {{ a }} = {{ value1 }}
+      {{ b }} = {{ value2 }}
+      {{ c }} = {{ value3 }}
+    output: |-
+      1 = 1
+      2 = 2
+      3 = 3
+
+  - name: assignment-erroneous-whitespace-01
+    description: |
+      Basic assignment without whitespace between percentage signs & equal operator.
+    params:
+      a: 1
+    template: |-
+      {%value=a;%}
+      {{ a }} = {{ value }}
+    output: |-
+      1 = 1
+
+  - name: assignment-erroneous-whitespace-02
+    description: |
+      Multi-varable assignment with variables assigned on different lines.
+    params:
+      a: 1
+      b: 2
+      c: 3
+    template: |-
+      {% 
+          value1 = a; 
+          value2 = b; 
+          value3 = c; 
+      %}
+      {{ a }} = {{ value1 }}
+      {{ b }} = {{ value2 }}
+      {{ c }} = {{ value3 }}
+    output: |-
+      1 = 1
+      2 = 2
+      3 = 3
+
+  - name: assignment-erroneous-whitespace-03
+    description: |
+      Multi-varable assignment with variables assigned on different lines (variation 2).
+    params:
+      a: 1
+      b: 2
+      c: 3
+    template: |-
+      {% value1 = a; 
+          value2 = b; 
+          value3 = c; %}
+      {{ a }} = {{ value1 }}
+      {{ b }} = {{ value2 }}
+      {{ c }} = {{ value3 }}
+    output: |-
+      1 = 1
+      2 = 2
+      3 = 3
+
+  - name: assignment-erroneous-whitespace-04
+    description: |
+      Multi-varable assignment with variables assigned on different lines (variation 3).
+    params:
+      a: 1
+      b: 2
+      c: 3
+    template: |-
+      {% 
+          value1 = a; value2 = b; 
+          value3 = c; 
+          %}
+      {{ a }} = {{ value1 }}
+      {{ b }} = {{ value2 }}
+      {{ c }} = {{ value3 }}
+    output: |-
+      1 = 1
+      2 = 2
+      3 = 3
+
+    
