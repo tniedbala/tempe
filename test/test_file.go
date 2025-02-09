@@ -11,10 +11,11 @@ import (
 )
 
 type Test struct {
-	Name     string         `yaml:"name"`
-	Params   map[string]any `yaml:"params"`
-	Template string         `yaml:"template"`
-	Output   string         `yaml:"output"`
+	Name        string         `yaml:"name"`
+	Description string         `yaml:"description"`
+	Params      map[string]any `yaml:"params"`
+	Template    string         `yaml:"template"`
+	Output      string         `yaml:"output"`
 }
 
 type TestFile struct {

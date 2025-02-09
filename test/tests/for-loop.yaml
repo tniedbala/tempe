@@ -1,0 +1,77 @@
+tests:
+  - name: for-loop-01
+    description: |
+      Basic for loop.
+    params:
+      values: [A, B, C]
+    template: |-
+      {% for value in values %}
+      {{ value }}
+      {% endfor %}
+    output: "A\nB\nC\n"
+
+  - name: for-loop-added-newline-01
+    description: |
+      Basic for loop with additional newline preceding iteration expression.
+    params:
+      values: [A, B, C]
+    template: |-
+      {% for value in values %}
+
+      {{ value }}
+      {% endfor %}
+    output: "\nA\n\nB\n\nC\n"
+
+  - name: for-loop-added-newline-02
+    description: |
+      Basic for loop with additional newline following iteration expression.
+    params:
+      values: [A, B, C]
+    template: |-
+      {% for value in values %}
+      {{ value }}
+
+      {% endfor %}
+    output: "A\n\nB\n\nC\n"
+
+  - name: for-loop-erroneous-whitespace-01
+    description: |
+      Basic for loop with no whitespace in-between percentage signs.
+    params:
+      values: [A, B, C]
+    template: |-
+      {%for value in values%}
+      {{ value }}
+      {%endfor%}
+    output: "A\nB\nC\n"
+
+  - name: for-loop-erroneous-whitespace-02
+    description: |
+      Basic for loop with newlines in for/endfor statement syntax.
+    params:
+      values: [A, B, C]
+    template: |-
+      {%
+        for value in values
+      %}
+      {{ value }}
+      {% 
+        endfor 
+      %}
+    output: "A\nB\nC\n"
+
+  - name: for-loop-erroneous-whitespace-03
+    description: |
+      Basic for loop with additional variations of spaces/newlines in for/endfor statement syntax.
+    params:
+      values: [A, B, C]
+    template: |-
+      {%for value 
+      
+          in values
+      %}
+      {{ value }}
+      {% 
+        
+        endfor%}
+    output: "A\nB\nC\n"

@@ -1,5 +1,7 @@
 tests:
   - name: if-01
+    description: |
+      Basic if statement with true condition.
     params:
       condition: true
     template: |-
@@ -9,6 +11,8 @@ tests:
     output: "A"
 
   - name: if-02
+    description: |
+      Basic if statement with false condition.
     params:
       condition: false
     template: |-
@@ -18,6 +22,8 @@ tests:
     output: ""
 
   - name: if-else-01
+    description: |
+      Basic if statement with else clause + true condition.
     params:
       condition: true
     template: |-
@@ -29,6 +35,8 @@ tests:
     output: "A"
 
   - name: if-else-02
+    description: |
+      Basic if statement with else clause + false condition.
     params:
       condition: false
     template: |-
@@ -40,6 +48,8 @@ tests:
     output: "B"
 
   - name: if-elseif-else-01
+    description: |
+      Basic if statement with elseif + else clauses (condition1 true).
     params:
       condition1: true
       condition2: false
@@ -54,6 +64,8 @@ tests:
     output: "A"
 
   - name: if-elseif-else-02
+    description: |
+      Basic if statement with elseif + else clauses (condition2 true).
     params:
       condition1: false
       condition2: true
@@ -68,6 +80,8 @@ tests:
     output: "B"
 
   - name: if-elseif-else-03
+    description: |
+      Basic if statement with elseif + else clauses (no conditions true).
     params:
       condition1: false
       condition2: false
@@ -80,3 +94,190 @@ tests:
       C
       {% endif %}
     output: "C"
+
+  - name: multi-elseif-01
+    description: |
+      Basic if statement with else + multiple elseif clauses (condition1 true).
+    params:
+      condition1: true
+      condition2: false
+      condition3: false
+    template: |-
+      {% if condition1 %}
+      A
+      {% elseif condition2 %}
+      B
+      {% elseif condition3 %}
+      C
+      {% else %}
+      D
+      {% endif %}
+    output: "A"
+
+  - name: multi-elseif-02
+    description: |
+      Basic if statement with else + multiple elseif clauses (condition2 true).
+    params:
+      condition1: false
+      condition2: true
+      condition3: false
+    template: |-
+      {% if condition1 %}
+      A
+      {% elseif condition2 %}
+      B
+      {% elseif condition3 %}
+      C
+      {% else %}
+      D
+      {% endif %}
+    output: "B"
+
+  - name: multi-elseif-03
+    description: |
+      Basic if statement with else + multiple elseif clauses (condition3 true).
+    params:
+      condition1: false
+      condition2: false
+      condition3: true
+    template: |-
+      {% if condition1 %}
+      A
+      {% elseif condition2 %}
+      B
+      {% elseif condition3 %}
+      C
+      {% else %}
+      D
+      {% endif %}
+    output: "C"
+
+  - name: multi-elseif-04
+    description: |
+      Basic if statement with else + multiple elseif clauses (no conditions true).
+    params:
+      condition1: false
+      condition2: false
+      condition3: false
+    template: |-
+      {% if condition1 %}
+      A
+      {% elseif condition2 %}
+      B
+      {% elseif condition3 %}
+      C
+      {% else %}
+      D
+      {% endif %}
+    output: "D"
+
+  - name: exlude-else-01
+    description: |
+      Basic if statement with multiple elseif clauses and no else clause (condition2 true).
+    params:
+      condition1: false
+      condition2: true
+      condition3: false
+    template: |-
+      {% if condition1 %}
+      A
+      {% elseif condition2 %}
+      B
+      {% elseif condition3 %}
+      C
+      {% endif %}
+    output: "B"
+
+  - name: exlude-else-02
+    description: |
+      Basic if statement with multiple elseif clauses and no else clause (no conditions true).
+    params:
+      condition1: false
+      condition2: false
+      condition3: false
+    template: |-
+      {% if condition1 %}
+      A
+      {% elseif condition2 %}
+      B
+      {% elseif condition3 %}
+      C
+      {% endif %}
+    output: ""
+
+  - name: if-erroneous-whitespace-01
+    description: |
+      Basic if/elseif/else statement with whitespace removed from statement syntax.
+    params:
+      condition1: false
+      condition2: true
+    template: |-
+      {%if condition1%}
+      A
+      {%elseif condition2%}
+      B
+      {%else%}
+      C
+      {%endif%}
+    output: "B"
+
+  - name: if-erroneous-whitespace-01
+    description: |
+      Basic if/elseif/else statement with additional whitespace added within statement syntax.
+    params:
+      condition1: false
+      condition2: true
+    template: |-
+      {%   if condition1   %}
+      A
+      {%     elseif condition2       %}
+      B
+      {%  else           %}
+      C
+      {%   endif                       %}
+    output: "B"
+
+  - name: if-erroneous-whitespace-03
+    description: |
+      Basic if/elseif/else statement with additional newlines added within statement syntax.
+    params:
+      condition1: false
+      condition2: true
+    template: |-
+      {%
+        if condition1
+      %}
+      A
+      {%
+        elseif condition2
+      %}
+      B
+      {%
+        else
+      %}
+      C
+      {%
+        endif
+      %}
+    output: "B"
+
+  - name: if-erroneous-whitespace-03
+    description: |
+      Basic if/elseif/else statement with additional variations of newlines and spaces added within statement syntax.
+    params:
+      condition1: false
+      condition2: true
+    template: |-
+      {%    if condition1
+          %}
+      A
+      {%
+        
+            elseif condition2
+        %}
+      B
+      {%
+                else%}
+      C
+      {%endif          %}
+    output: "B"
