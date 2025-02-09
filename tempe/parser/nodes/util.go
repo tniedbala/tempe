@@ -4,27 +4,6 @@ import (
 	"strings"
 )
 
-type IfClauseKind int
-
-const (
-	If IfClauseKind = iota
-	ElseIf
-	Else
-)
-
-func (k IfClauseKind) String() string {
-	switch k {
-	case If:
-		return "if"
-	case ElseIf:
-		return "elseif"
-	case Else:
-		return "else"
-	default:
-		return "IfClause"
-	}
-}
-
 const TextAlignWidth int = 60
 const FormatStringMaxLength int = 60
 
@@ -49,4 +28,16 @@ func replaceSpace(text string) string {
 func replaceWhitespace(text string) string {
 	text = replaceNewline(text)
 	return replaceSpace(text)
+}
+
+type nodeSpec struct {
+	Type string `json:"type"`
+	Spec any    `json:"spec"`
+}
+
+func jsonNodeSpec(typeName string, spec any) nodeSpec {
+	return nodeSpec{
+		Type: typeName,
+		Spec: spec,
+	}
 }
