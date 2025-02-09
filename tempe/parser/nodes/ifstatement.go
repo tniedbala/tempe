@@ -1,22 +1,35 @@
 package nodes
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
+	// "strings"
 
 	"github.com/tniedbala/tempe-go/tempe/api"
+	opt "github.com/tniedbala/tempe-go/tempe/options"
 )
 
+type ifStatementMarshaller struct {
+	Whitespace WhitespaceSyntax         `json:"whitespace"`
+	Clauses    *TemplateNodesCollection `json:"clauses"`
+}
+
 type IfStatement struct {
-	Statement
-	clauses *TemplateNodesCollection
+	whitespace WhitespaceSyntax
+	clauses    *TemplateNodesCollection
 }
 
 func NewIfStatement(clauses *TemplateNodesCollection) *IfStatement {
 	return &IfStatement{
-		Statement: NewStatement(),
-		clauses:   clauses,
+		whitespace: NewWhitespaceSyntax(opt.EndIf),
+		clauses:    clauses,
 	}
+}
+
+func (n *IfStatement) SetWhitespace(openStmt, closeStmt string) {
+	n.whitespace.Leading = NewWhitespace(opt.Leading, openStmt)
+	n.whitespace.Trailing = NewWhitespace(opt.Trailing, closeStmt)
 }
 
 func (n *IfStatement) Children() []api.TemplateNode {
@@ -38,12 +51,12 @@ func (n *IfStatement) Render(opts api.Options, env api.Env, w io.StringWriter) e
 			if err = clause.Render(opts, env, w); err != nil {
 				return err
 			}
+			// b := w.(*strings.Builder)
+			// fmt.Println(b.String())
+			break
 		}
 	}
-	if err := n.RenderWhitespace(Lower, opts, w); err != nil {
-		return err
-	}
-	return nil
+	return n.whitespace.Render(opts, w)
 }
 
 func (n *IfStatement) Format() (string, string) {
@@ -52,4 +65,11 @@ func (n *IfStatement) Format() (string, string) {
 
 func (n IfStatement) String() string {
 	return "IfStatement{}"
+}
+
+func (n *IfStatement) MarshalJSON() ([]byte, error) {
+	return json.Marshal(jsonNodeSpec("IfStatement", ifStatementMarshaller{
+		Whitespace: n.whitespace,
+		Clauses:    n.clauses,
+	}))
 }
