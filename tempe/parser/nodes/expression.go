@@ -1,12 +1,17 @@
 package nodes
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
 
 	"github.com/tniedbala/tempe-go/tempe/api"
 )
+
+type expressionMarshaller struct {
+	Expression string `json:"expression"`
+}
 
 type Expression struct {
 	expression string
@@ -37,4 +42,10 @@ func (n Expression) Format() (string, string) {
 
 func (n Expression) String() string {
 	return "Expression{}"
+}
+
+func (n *Expression) MarshalJSON() ([]byte, error) {
+	return json.Marshal(jsonNodeSpec("Expression", expressionMarshaller{
+		Expression: n.expression,
+	}))
 }

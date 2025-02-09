@@ -1,6 +1,7 @@
 package nodes
 
 import (
+	"encoding/json"
 	"io"
 	"iter"
 
@@ -50,4 +51,8 @@ func (n *TemplateNodesCollection) Format() (string, string) {
 
 func (n *TemplateNodesCollection) String() string {
 	return "TemplateNodesCollection{}"
+}
+
+func (n *TemplateNodesCollection) MarshalJSON() ([]byte, error) {
+	return json.Marshal(n.nodes)
 }
