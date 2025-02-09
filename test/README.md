@@ -24,24 +24,25 @@ All default tests can be run at once, or tests can be run for an individual file
 package default_test
 
 import (
-    "testing"
-    "github.com/tniedbala/tempe-go/tempe"
-    tempe_test "github.com/tniedbala/tempe-go/test"
+	"testing"
+
+	"github.com/tniedbala/tempe-go/tempe"
+	tempe_test "github.com/tniedbala/tempe-go/test"
 )
 
 var testSuite tempe_test.TestSuite
 
 func init() {
-    engine := tempe.DefaultEngine()
-    return tempe_test.NewTestSuite(engine)
+	engine := tempe.DefaultEngine()
+	testSuite = tempe_test.NewTestSuite(engine)
 }
 
 func TestAll(t *testing.T) {
-    testSuite.TestSpec(t)
+	testSuite.TestSpec(t)
 }
 
 func TestIfStatement(t *testing.T) {
-    testSuite.TestSpec(t, "if-statement.yaml")
+	testSuite.TestSpec(t, "if-statement.yaml")
 }
 ```
 
@@ -55,10 +56,11 @@ files in the directory:
 package custom_test
 
 import (
-    "embed"
-    "testing"
-    "github.com/tniedbala/tempe-go/tempe"
-    tempe_test "github.com/tniedbala/tempe-go/test"
+	"embed"
+	"testing"
+
+	"github.com/tniedbala/tempe-go/tempe"
+	tempe_test "github.com/tniedbala/tempe-go/test"
 )
 
 //go:embed tests
@@ -70,20 +72,19 @@ var fileFs embed.FS
 var testSuite tempe_test.TestSuite
 
 func init() {
-    engine := tempe.DefaultEngine()
-    return tempe_test.NewTestSuite(engine)
+	engine := tempe.DefaultEngine()
+	testSuite = tempe_test.NewTestSuite(engine)
 }
 
 func TestFilesInDirectory(t *testing.T) {
-    testSuite.TestDir(t, dirFs, "tests/*.yaml")
+	testSuite.TestDir(t, dirFs, "tests/*.yaml")
 }
 
 func TestIndividualFile(t *testing.T) {
-    filename := "tests/custom-tests.yaml"
-    file, err := fileFs.Open(filename)
-    if err != nil {
-        t.Fatal(err)
-        return
+	filename := "tests/custom-tests.yaml"
+	file, err := fileFs.Open(filename)
+	if err != nil {
+		t.Fatal(err)
     }
     testSuite.TestFile(t, filename, file)
 }
