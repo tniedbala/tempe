@@ -1,36 +1,47 @@
 package nodes
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
 
 	"github.com/tniedbala/tempe-go/tempe/api"
-	"github.com/tniedbala/tempe-go/tempe/opt"
+	opt "github.com/tniedbala/tempe-go/tempe/options"
 )
 
 type Var struct {
-	name       string
-	expression string
+	Name       string `json:"name"`
+	Expression string `json:"expression"`
 }
 
 func NewVar(name, expression string) Var {
 	return Var{
-		name:       strings.TrimSpace(name),
-		expression: strings.TrimSpace(expression),
+		Name:       strings.TrimSpace(name),
+		Expression: strings.TrimSpace(expression),
 	}
 }
 
+type assignmentMarshaller struct {
+	Whitespace WhitespaceSyntax `json:"whitespace"`
+	Vars       []Var            `json:"vars"`
+}
+
 type Assignment struct {
-	Statement
-	vars []Var
+	whitespace WhitespaceSyntax
+	vars       []Var
 }
 
 func NewAssignment() *Assignment {
 	return &Assignment{
-		Statement: NewStatement(),
-		vars:      []Var{},
+		whitespace: NewWhitespaceSyntax(opt.Assignment),
+		vars:       []Var{},
 	}
+}
+
+func (n *Assignment) SetWhitespace(openStmt, closeStmt string) {
+	n.whitespace.Leading = NewWhitespace(opt.Leading, openStmt)
+	n.whitespace.Trailing = NewWhitespace(opt.Trailing, closeStmt)
 }
 
 func (n *Assignment) Children() []api.TemplateNode {
@@ -40,7 +51,7 @@ func (n *Assignment) Children() []api.TemplateNode {
 func (n *Assignment) Names() []string {
 	names := make([]string, len(n.vars))
 	for i, v := range n.vars {
-		names[i] = v.name
+		names[i] = v.Name
 	}
 	return names
 }
@@ -49,31 +60,31 @@ func (n *Assignment) Append(name, expression string) {
 	n.vars = append(n.vars, NewVar(name, expression))
 }
 
-func (n *Assignment) Render(opts api.Options, env api.Env, w io.StringWriter) error {
-	if err := n.RenderWhitespace(Upper, opts, w); err != nil {
-		return err
-	}
+func (n *Assignment) Render(options api.Options, env api.Env, w io.StringWriter) error {
 	for _, v := range n.vars {
-		value, err := env.Eval(v.expression)
+		value, err := env.Eval(v.Expression)
 		if err != nil {
 			return err
 		}
-		env.Set(v.name, value)
+		env.Set(v.Name, value)
 	}
-	if err := n.RenderWhitespace(Lower, opts, w); err != nil {
-		return err
-	}
-	return nil
+	return n.whitespace.Render(options, w)
 }
 
 func (n Assignment) Format() (string, string) {
-	leftUpper, rightUpper := n.whitespace[opt.UpperLeft].text, n.whitespace[opt.UpperRight].text
-	leftUpper = replaceWhitespace(leftUpper)
-	rightUpper = replaceWhitespace(rightUpper)
+	leading := replaceWhitespace(n.whitespace.Leading.Text)
+	trailing := replaceWhitespace(n.whitespace.Trailing.Text)
 	names := strings.Join(n.Names(), " = ; ")
-	return "Assignment", fmt.Sprintf(`"%s{%% %s = ; %%}%s"`, leftUpper, names, rightUpper)
+	return "Assignment", fmt.Sprintf(`"%s{%% %s = ; %%}%s"`, leading, names, trailing)
 }
 
 func (n Assignment) String() string {
 	return "Assignment{}"
+}
+
+func (n *Assignment) MarshalJSON() ([]byte, error) {
+	return json.Marshal(jsonNodeSpec("Assignment", assignmentMarshaller{
+		Whitespace: n.whitespace,
+		Vars:       n.vars,
+	}))
 }
