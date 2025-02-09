@@ -1,8 +1,75 @@
 tests:
-  - name: hello_world
+  - name: single-expression-template-01
+    description: |
+      Basic template with a single parameter & expression.
     params:
       name: world
     template: |-
       hello {{ name }}!
+    output: |-
+      hello world!
+
+  - name: multi-expression-template-01
+    description: |
+      Basic template with multiple parameters & expressions.
+    params:
+      a: 1
+      b: 2
+      c: 3
+    template: |-
+      a = {{ a }}, b = {{ b }}, c = {{ c }}
+    output: |-
+      a = 1, b = 2, c = 3
+
+  - name: no-expression-template-01
+    description: |
+      Basic template no parameters or expressions.
+    params: {}
+    template: |-
+      test
+    output: |-
+      test
+
+  - name: expression-erroneous-whitespace-01
+    description: |
+      Basic template with no whitespace in-between curly braces and expression.
+    params:
+      name: world
+    template: |-
+      hello {{name}}!
+    output: |-
+      hello world!
+
+  - name: expression-erroneous-whitespace-02
+    description: |
+      Basic template with extra whitespace in-between curly braces and expression.
+    params:
+      name: world
+    template: |-
+      hello {{   name   }}!
+    output: |-
+      hello world!
+
+  - name: expression-erroneous-whitespace-03
+    description: |
+      Basic template with extra newlines in-between curly braces and expression.
+    params:
+      name: world
+    template: |-
+      hello {{  
+      name   
+      }}!
+    output: |-
+      hello world!
+
+  - name: expression-erroneous-whitespace-04
+    description: |
+      Basic template with extra newlines and spaces in-between curly braces and expression.
+    params:
+      name: world
+    template: |-
+      hello {{      
+                  name   
+              }}!
     output: |-
       hello world!
