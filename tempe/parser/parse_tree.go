@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"io"
 	"iter"
 
 	"github.com/tniedbala/tempe-go/tempe/api"
@@ -48,7 +49,7 @@ func (p *ParseTree) Children() iter.Seq2[int, api.ParseTree] {
 	}
 }
 
-func (p *ParseTree) PrettyPrint() (string, error) {
+func (p *ParseTree) RenderTree(w io.StringWriter) error {
 	formatter := NewParseTreeFormatter(nil, p, false)
-	return formatter.PrettyPrint()
+	return formatter.Render(w)
 }
