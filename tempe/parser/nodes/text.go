@@ -1,11 +1,16 @@
 package nodes
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/tniedbala/tempe-go/tempe/api"
 )
+
+type textMarshaller struct {
+	Text string `json:"text"`
+}
 
 type Text struct {
 	text string
@@ -30,4 +35,10 @@ func (n Text) Format() (string, string) {
 
 func (n Text) String() string {
 	return "Text{}"
+}
+
+func (n *Text) MarshalJSON() ([]byte, error) {
+	return json.Marshal(jsonNodeSpec("Text", textMarshaller{
+		Text: n.text,
+	}))
 }

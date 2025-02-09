@@ -1,28 +1,69 @@
 package nodes
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
 
 	"github.com/tniedbala/tempe-go/tempe/api"
-	"github.com/tniedbala/tempe-go/tempe/opt"
+	opt "github.com/tniedbala/tempe-go/tempe/options"
 )
 
+type IfClauseKind int
+
+const (
+	If IfClauseKind = iota
+	ElseIf
+	Else
+)
+
+func (k IfClauseKind) String() string {
+	switch k {
+	case If:
+		return "if"
+	case ElseIf:
+		return "elseif"
+	case Else:
+		return "else"
+	default:
+		return "undefined"
+	}
+}
+
+var ifClauseMap = map[IfClauseKind]opt.SyntaxElement{
+	If:     opt.If,
+	ElseIf: opt.ElseIf,
+	Else:   opt.Else,
+}
+
+type ifClauseMarshaller struct {
+	Clause     string                   `json:"clause"`
+	Expression string                   `json:"expression"`
+	Whitespace WhitespaceSyntax         `json:"whitespace"`
+	Body       *TemplateNodesCollection `json:"body"`
+}
+
 type IfClause struct {
-	Statement
+	whitespace WhitespaceSyntax
 	kind       IfClauseKind
 	expression string
 	body       *TemplateNodesCollection
 }
 
 func NewIfClause(kind IfClauseKind, expression string, body *TemplateNodesCollection) *IfClause {
+	elem := ifClauseMap[kind]
 	return &IfClause{
-		Statement:  NewStatement(),
+		whitespace: NewWhitespaceSyntax(elem),
 		kind:       kind,
 		expression: strings.TrimSpace(expression),
 		body:       body,
 	}
+}
+
+func (n *IfClause) SetWhitespace(openStmt, closeStmt string) {
+	n.whitespace.Leading = NewWhitespace(opt.Leading, openStmt)
+	n.whitespace.Trailing = NewWhitespace(opt.Trailing, closeStmt)
 }
 
 func (n *IfClause) Children() []api.TemplateNode {
@@ -40,15 +81,8 @@ func (n *IfClause) Eval(env api.Env) (bool, error) {
 	return value.Bool(), nil
 }
 
-func (n *IfClause) renderWhitespace(opts api.Options, w io.StringWriter) error {
-	if n.kind == If {
-		return n.RenderWhitespace(Upper, opts, w)
-	}
-	return n.RenderWhitespace(Inner, opts, w)
-}
-
 func (n *IfClause) Render(opts api.Options, env api.Env, w io.StringWriter) error {
-	if err := n.renderWhitespace(opts, w); err != nil {
+	if err := n.whitespace.Render(opts, w); err != nil {
 		return err
 	}
 	localEnv, err := env.Copy()
@@ -63,20 +97,23 @@ func (n *IfClause) Render(opts api.Options, env api.Env, w io.StringWriter) erro
 
 func (n *IfClause) Format() (string, string) {
 	label := "IfClause"
-	var leftWs, rightWs string
-	if n.kind == If {
-		leftWs, rightWs = n.whitespace[opt.UpperLeft].text, n.whitespace[opt.UpperRight].text
-	} else {
-		leftWs, rightWs = n.whitespace[opt.InnerLeft].text, n.whitespace[opt.InnerRight].text
-	}
-	leftWs = replaceWhitespace(leftWs)
-	rightWs = replaceWhitespace(rightWs)
+	leading := replaceWhitespace(n.whitespace.Leading.Text)
+	trailing := replaceWhitespace(n.whitespace.Trailing.Text)
 	if n.kind == Else {
-		return label, fmt.Sprintf("%s{%% %s %%}%s", leftWs, n.kind, rightWs)
+		return label, fmt.Sprintf("%s{%% %s %%}%s", leading, n.kind, trailing)
 	}
-	return label, fmt.Sprintf(`"%s{%% %s %s %%}%s"`, leftWs, n.kind, formatText(n.expression), rightWs)
+	return label, fmt.Sprintf(`"%s{%% %s %s %%}%s"`, leading, n.kind, formatText(n.expression), trailing)
 }
 
 func (n *IfClause) String() string {
 	return fmt.Sprintf("IfClause{kind: %s}", n.kind)
+}
+
+func (n *IfClause) MarshalJSON() ([]byte, error) {
+	return json.Marshal(jsonNodeSpec("IfClause", ifClauseMarshaller{
+		Clause:     n.kind.String(),
+		Expression: n.expression,
+		Whitespace: n.whitespace,
+		Body:       n.body,
+	}))
 }

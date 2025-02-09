@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"bytes"
 	"io"
 
 	"github.com/tniedbala/tempe-go/tempe/api"
@@ -80,12 +79,4 @@ func (p *ParseTreeFormatter) Render(w io.StringWriter) error {
 		}
 	}
 	return nil
-}
-
-func (p *ParseTreeFormatter) PrettyPrint() (string, error) {
-	var b bytes.Buffer
-	if err := p.Render(&b); err != nil {
-		return "", err
-	}
-	return b.String(), nil
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/tniedbala/tempe-go/tempe/api"
 	"github.com/tniedbala/tempe-go/tempe/parser/base"
 	nd "github.com/tniedbala/tempe-go/tempe/parser/nodes"
+	opt "github.com/tniedbala/tempe-go/tempe/options"
 )
 
 type TemplateVisitor struct {
@@ -66,7 +67,7 @@ func (v TemplateVisitor) VisitAssignment(ctx base.IAssignmentContext) *nd.Assign
 		assignment.Append(name, expr)
 	}
 	openStmt, closeStmt := v.visitEndStatement(ctx)
-	assignment.SetWhitespace(nd.Upper, openStmt, closeStmt)
+	assignment.SetWhitespace(openStmt, closeStmt)
 	return assignment
 }
 
@@ -80,10 +81,10 @@ func (v TemplateVisitor) VisitForLoop(ctx base.IForLoopContext) *nd.ForLoop {
 	expr := startFor.Expr().GetText()
 	body := v.VisitNodes(ctx.AllNode())
 	forLoop := nd.NewForLoop(indexName, varName, expr, body)
-	leftUpper, rightUpper := v.visitStartStatement(startFor)
-	leftLower, rightLower := v.visitEndStatement(endFor)
-	forLoop.SetWhitespace(nd.Upper, leftUpper, rightUpper)
-	forLoop.SetWhitespace(nd.Lower, leftLower, rightLower)
+	enterLeading, enterTrailing := v.visitStartStatement(startFor)
+	exitLeading, exitTrailing := v.visitEndStatement(endFor)
+	forLoop.SetWhitespace(opt.For, enterLeading, enterTrailing)
+	forLoop.SetWhitespace(opt.EndFor, exitLeading, exitTrailing)
 	return forLoop
 }
 
@@ -102,7 +103,7 @@ func (v TemplateVisitor) VisitIfStatement(ctx base.IIfStatementContext) *nd.IfSt
 	}
 	ifStmt := nd.NewIfStatement(clauses)
 	openStmt, closeStmt := v.visitEndStatement(endIf)
-	ifStmt.SetWhitespace(nd.Lower, openStmt, closeStmt)
+	ifStmt.SetWhitespace(openStmt, closeStmt)
 	return ifStmt
 }
 
@@ -110,13 +111,7 @@ func (v TemplateVisitor) VisitIfClause(ctx ifClauseContext, kind nd.IfClauseKind
 	expr, body := ctx.Expr().GetText(), v.VisitNodes(ctx.AllNode())
 	clause := nd.NewIfClause(kind, expr, body)
 	openStmt, closeStmt := v.visitStartStatement(ctx)
-	var position nd.StatementPosition
-	if kind == nd.If {
-		position = nd.Upper
-	} else {
-		position = nd.Inner
-	}
-	clause.SetWhitespace(position, openStmt, closeStmt)
+	clause.SetWhitespace(openStmt, closeStmt)
 	return clause
 }
 
@@ -124,7 +119,7 @@ func (v TemplateVisitor) VisitElseClause(ctx base.IElseContext) *nd.IfClause {
 	body := v.VisitNodes(ctx.AllNode())
 	clause := nd.NewIfClause(nd.Else, "", body)
 	openStmt, closeStmt := v.visitEndStatement(ctx)
-	clause.SetWhitespace(nd.Inner, openStmt, closeStmt)
+	clause.SetWhitespace(openStmt, closeStmt)
 	return clause
 }
 

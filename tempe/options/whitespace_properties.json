@@ -1,0 +1,34 @@
+{
+  "assignment": {
+    "leading": "trim",
+    "trailing": "trim"
+  },
+  "comment": {
+    "leading": "trim",
+    "trailing": "trim"
+  },
+  "for": {
+    "leading": "trimspace",
+    "trailing": "trim"
+  },
+  "endfor": {
+    "leading": "trim",
+    "trailing": "trim"
+  },
+  "if": {
+    "leading": "trimspace",
+    "trailing": "trim"
+  },
+  "elseif": {
+    "leading": "trim",
+    "trailing": "trim"
+  },
+  "else": {
+    "leading": "trim",
+    "trailing": "trim"
+  },
+  "endif": {
+    "leading": "trim",
+    "trailing": "trimspace"
+  }
+}
