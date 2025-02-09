@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/tniedbala/tempe-go/tempe/api"
-	"github.com/tniedbala/tempe-go/tempe/opt"
 	"github.com/tniedbala/tempe-go/tempe/parser"
+	opt "github.com/tniedbala/tempe-go/tempe/options"
 )
 
 type TemplateEngine struct {
@@ -27,19 +27,6 @@ func NewTemplateEngine(env api.Env, value api.Value) TemplateEngine {
 
 func (e TemplateEngine) Options() api.Options {
 	return e.options
-}
-
-func (e TemplateEngine) GetOption(opt api.Option) (any, bool) {
-	return e.options.Get(opt)
-}
-
-func (e TemplateEngine) SetOptions(opts ...api.Option) error {
-	for _, o := range opts {
-		if err := e.options.Set(o); err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func (e TemplateEngine) Read(reader io.Reader) (api.Template, error) {
