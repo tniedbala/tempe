@@ -1,8 +1,8 @@
 package tempe
 
 import (
-	"bytes"
 	"io"
+	"strings"
 
 	"github.com/tniedbala/tempe-go/tempe/api"
 	"github.com/tniedbala/tempe-go/tempe/parser"
@@ -65,7 +65,7 @@ func (t *Template) ParseTree() api.ParseTree {
 }
 
 func (t *Template) Render(params ...map[string]any) (string, error) {
-	var b bytes.Buffer
+	var b strings.Builder
 	if err := t.Write(&b, params...); err != nil {
 		return "", err
 	}
@@ -82,6 +82,10 @@ func (t *Template) Write(w io.StringWriter, params ...map[string]any) error {
 	}
 	opts := t.engine.Options()
 	return t.tree.Node().Render(opts, localEnv, w)
+}
+
+func (t *Template) Inspect() api.TemplateInspector {
+	return NewTemplateInspector(t)
 }
 
 func (t Template) String() string {
